@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GROWTH.AI — YouTube Strategy Engine</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #080808;
+  --surface: #0e0e0e;
+  --surface2: #111;
+  --border: #1a1a1a;
+  --border2: #222;
+  --red: #FF3B3B;
+  --red-dim: rgba(255,59,59,0.08);
+  --red-mid: rgba(255,59,59,0.18);
+  --white: #F1F1F1;
+  --text: #A0A0A0;
+  --muted: #3a3a3a;
+  --dim: #333;
+  --green: #22C55E;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── LOGIN ── */
+#login-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  flex-direction: column;
+  gap: 0;
+}
+
+.login-box {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.login-logo-icon {
+  width: 32px; height: 32px;
+  background: var(--red);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.login-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.login-sub {
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.login-label {
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.login-input {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid var(--border2);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  outline: none;
+  letter-spacing: 0.05em;
+  transition: border-color 0.15s;
+}
+
+.login-input:focus { border-color: var(--red); }
+
+.login-btn {
+  width: 100%;
+  background: var(--red);
+  border: none;
+  color: white;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 14px;
+  transition: opacity 0.15s;
+}
+
+.login-btn:hover { opacity: 0.85; }
+.login-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.login-error {
+  font-size: 10px;
+  color: var(--red);
+  margin-top: 8px;
+  text-align: center;
+  letter-spacing: 0.04em;
+  min-height: 16px;
+}
+
+.login-footer {
+  font-size: 9px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 16px;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+}
+
+/* ── APP ── */
+#app { display: none; flex-direction: column; height: 100dvh; }
+#app.visible { display: flex; }
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 28px; height: 28px;
+  background: var(--red);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.header-sub {
+  font-size: 9px;
+  color: var(--dim);
+  margin-top: 1px;
+  letter-spacing: 0.06em;
+}
+
+.status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+}
+
+.status-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 5px var(--green);
+  animation: pd 2s infinite;
+}
+
+@keyframes pd { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* TABS */
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tab-bar::-webkit-scrollbar { display: none; }
+
+.tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 400;
+  padding: 9px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  position: relative;
+}
+
+.tab.active {
+  color: var(--white);
+  font-weight: 600;
+  border-bottom-color: var(--red);
+  background: var(--surface2);
+}
+
+.tab-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--red);
+  display: none;
+}
+
+.tab.has-messages .tab-dot { display: block; }
+
+/* MESSAGES */
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+
+.welcome {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  max-width: 520px;
+}
+
+.welcome-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.welcome p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #505050;
+}
+
+.welcome p + p { margin-top: 6px; }
+
+.caps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.cap {
+  background: var(--red-dim);
+  border: 1px solid var(--red-mid);
+  color: var(--red);
+  font-size: 8px;
+  padding: 3px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+}
+
+/* MSG ROW */
+.msg-row {
+  display: flex;
+  gap: 10px;
+  max-width: 680px;
+  width: 100%;
+  align-self: flex-start;
+}
+
+.msg-row.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  width: 26px; height: 26px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.avatar.ai {
+  background: var(--red-dim);
+  border: 1px solid rgba(255,59,59,0.25);
+  color: var(--red);
+}
+
+.avatar.user {
+  background: #111;
+  border: 1px solid var(--border2);
+  color: var(--dim);
+}
+
+.bubble {
+  padding: 10px 13px;
+  border-radius: 7px;
+  max-width: calc(100% - 38px);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.bubble.ai {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.bubble.user {
+  background: #111;
+  border: 1px solid var(--border2);
+  color: #D0D0D0;
+  white-space: pre-wrap;
+}
+
+/* MARKDOWN */
+.bubble.ai .md-h2 {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 16px;
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(255,59,59,0.15);
+}
+
+.bubble.ai .md-h2:first-child { margin-top: 0; }
+
+.bubble.ai .md-h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #E0E0E0;
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+.bubble.ai hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 10px 0;
+}
+
+.bubble.ai ul {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bubble.ai li {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  color: #B0B0B0;
+  line-height: 1.6;
+}
+
+.bubble.ai li::before {
+  content: '›';
+  color: var(--red);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.bubble.ai p { margin: 5px 0; color: #B0B0B0; }
+.bubble.ai p:first-child { margin-top: 0; }
+
+.bubble.ai strong { color: var(--white); font-weight: 600; }
+
+.bubble.ai code {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--red);
+}
+
+/* TYPING */
+.typing { display: flex; gap: 5px; align-items: center; padding: 2px 0; }
+.typing span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--red);
+}
+.typing span:nth-child(1) { animation: td 1.2s 0s infinite; }
+.typing span:nth-child(2) { animation: td 1.2s 0.2s infinite; }
+.typing span:nth-child(3) { animation: td 1.2s 0.4s infinite; }
+@keyframes td { 0%,60%,100%{transform:translateY(0);opacity:.3} 30%{transform:translateY(-5px);opacity:1} }
+
+/* TRUNCATED WARNING */
+.truncated-warn {
+  font-size: 10px;
+  color: var(--red);
+  margin-bottom: 7px;
+  letter-spacing: 0.06em;
+  display: none;
+  align-items: center;
+  gap: 5px;
+}
+
+.truncated-warn.visible { display: flex; }
+
+/* INPUT */
+.input-area {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  padding: 10px 14px;
+  flex-shrink: 0;
+}
+
+.input-row { display: flex; gap: 8px; align-items: flex-end; }
+
+#user-input {
+  flex: 1;
+  background: #0a0a0a;
+  border: 1px solid var(--border2);
+  color: #D0D0D0;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  resize: none;
+  min-height: 38px;
+  max-height: 120px;
+  line-height: 1.6;
+  outline: none;
+  scrollbar-width: none;
+  transition: border-color 0.15s;
+}
+
+#user-input:focus { border-color: #2a2a2a; }
+#user-input::placeholder { color: var(--muted); }
+
+.send-btn {
+  width: 38px; height: 38px;
+  background: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.1s;
+}
+
+.send-btn:disabled {
+  background: #111;
+  border-color: var(--border2);
+  cursor: not-allowed;
+}
+
+.input-meta {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  letter-spacing: 0.06em;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="login-title">GROWTH<span style="color:#FF3B3B">.AI</span></div>
+        <div class="login-sub">YOUTUBE STRATEGY ENGINE</div>
+      </div>
+    </div>
+    <div class="login-label">Chave de acesso</div>
+    <input class="login-input" id="password-input" type="password" placeholder="••••••••••••" />
+    <div class="login-error" id="login-error"></div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">ENTRAR</button>
+    <div class="login-footer">
+      Acesso exclusivo para clientes.<br>
+      Dúvidas? Entre em contato pelo WhatsApp.
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">GROWTH<span style="color:#FF3B3B">.AI</span></div>
+      <div class="header-sub">YOUTUBE STRATEGY ENGINE</div>
+    </div>
+    <div class="status">
+      <div class="status-dot"></div>
+      ONLINE
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab active" data-tab="chat" onclick="switchTab('chat')">
+      <span style="opacity:.7;font-size:9px">≡</span> Chat
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab" data-tab="roteiro" onclick="switchTab('roteiro')">
+      <span style="opacity:.7;font-size:9px">▶</span> Roteiro
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab" data-tab="analise" onclick="switchTab('analise')">
+      <span style="opacity:.7;font-size:9px">◎</span> Análise de Canal
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab" data-tab="ideias" onclick="switchTab('ideias')">
+      <span style="opacity:.7;font-size:9px">✦</span> Ideias
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab" data-tab="seo" onclick="switchTab('seo')">
+      <span style="opacity:.7;font-size:9px">#</span> Título + SEO
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab" data-tab="gravacao" onclick="switchTab('gravacao')">
+      <span style="opacity:.7;font-size:9px">⊡</span> Gravação
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab" data-tab="retencao" onclick="switchTab('retencao')">
+      <span style="opacity:.7;font-size:9px">↗</span> Retenção
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab" data-tab="shorts" onclick="switchTab('shorts')">
+      <span style="opacity:.7;font-size:9px">⚡</span> Shorts
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab" data-tab="monetizacao" onclick="switchTab('monetizacao')">
+      <span style="opacity:.7;font-size:9px">$</span> Monetização
+      <span class="tab-dot"></span>
+    </button>
+  </div>
+
+  <!-- MESSAGES -->
+  <div id="messages">
+    <div class="welcome" id="welcome-msg">
+      <div class="welcome-title">GROWTH.AI // INICIALIZADO</div>
+      <p>Estrategista de YouTube. Não dou conselhos genéricos — faço as perguntas certas primeiro, depois entrego o caminho específico para o seu canal.</p>
+      <p>Use as abas acima para cada modo, ou comece a digitar.</p>
+      <div class="caps">
+        <span class="cap">ROTEIRO</span>
+        <span class="cap">RETENÇÃO</span>
+        <span class="cap">CTR</span>
+        <span class="cap">SEO</span>
+        <span class="cap">SHORTS</span>
+        <span class="cap">GRAVAÇÃO</span>
+        <span class="cap">MONETIZAÇÃO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-area">
+    <div class="truncated-warn" id="truncated-warn">
+      <span>⚠</span> Resposta longa — digite <strong style="color:#F1F1F1;margin:0 4px">continuar</strong> para o próximo bloco
+    </div>
+    <div class="input-row">
+      <textarea id="user-input" placeholder="Digite sua pergunta..." rows="1"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="input-meta">
+      <span>↵ ENVIAR · ⇧↵ NOVA LINHA</span>
+      <span id="mode-label">CHAT MODE</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── SYSTEM PROMPTS ────────────────────────────────────────────────────────
+const BASE = `Você é o GROWTH — estrategista de conteúdo para YouTube.
+
+REGRAS:
+1. NUNCA dê um plano completo sem antes fazer perguntas. Colete contexto primeiro.
+2. Máximo 2-3 perguntas por vez. Nunca um questionário gigante.
+3. Respostas curtas e diretas. Listas só quando necessário.
+4. Quando o usuário responder, dê uma resposta acionável e específica.
+5. Tom: consultor sênior direto ao ponto.
+6. Se a resposta anterior foi cortada, continue de onde parou quando pedirem.`;
+
+const PROMPTS = {
+  chat: `${BASE}\nModo: Conversa estratégica geral sobre YouTube. Quando a pergunta for vaga, faça 1-2 perguntas para entender o contexto.`,
+  roteiro: `${BASE}\nModo: ROTEIRO.\n1. Pergunte: tema do vídeo e objetivo (views, vendas, inscritos).\n2. Crie roteiro: Hook (15s), Desenvolvimento, CTA.\n3. Inclua pontos de retenção e onde o espectador pode sair.\nSeja específico.`,
+  analise: `${BASE}\nModo: ANÁLISE DE CANAL.\n1. Peça o link do canal ou métricas principais.\n2. Analise: CTR provável, consistência, nicho, posicionamento, padrão de thumbnails.\n3. Entregue: 3 problemas críticos + 3 oportunidades concretas. Nada mais.\nSeja cirúrgico.`,
+  ideias: `${BASE}\nModo: IDEIAS DE VÍDEO.\n1. Pergunte: nicho, último vídeo que performou bem, audiência principal.\n2. Gere 5 ideias com título magnético + motivo de performance.\n3. Cada ideia em 2-3 linhas.`,
+  seo: `${BASE}\nModo: TÍTULO + SEO.\n1. Pergunte: tema e palavra-chave principal.\n2. Entregue: 3 títulos, descrição otimizada, 10 tags, 3 hashtags.\n3. Explique em 1 linha por que cada título funciona.`,
+  gravacao: `${BASE}\nModo: GRAVAÇÃO.\n1. Pergunte: equipamento disponível e ambiente de gravação.\n2. Dê orientações específicas para o setup DELE.\n3. Cobre: câmera, iluminação, áudio, cenário.`,
+  retencao: `${BASE}\nModo: RETENÇÃO.\n1. Pergunte: retenção média atual e onde as pessoas saem mais.\n2. Diagnostique o problema específico.\n3. Dê no máximo 3 táticas concretas para o problema identificado.`,
+  shorts: `${BASE}\nModo: SHORTS.\n1. Pergunte: nicho e se tem vídeo longo para recortar.\n2. Crie roteiro de Short: hook de 1-2s, desenvolvimento de 30-45s, CTA.\n3. Inclua sugestão de legenda e ritmo de corte.`,
+  monetizacao: `${BASE}\nModo: MONETIZAÇÃO.\n1. Pergunte: inscritos, nicho, se tem produto ou serviço.\n2. Mapeie 2-3 fontes de receita viáveis para o perfil dele.\n3. Dê caminho de 30 dias para a primeira fonte funcionar.`,
+};
+
+const TAB_OPENERS = {
+  roteiro:     "Quero criar um roteiro. Antes de começar, o que você precisa saber?",
+  analise:     "Quero analisar um canal. Me diga o que preciso fornecer.",
+  ideias:      "Preciso de ideias de vídeo para essa semana.",
+  seo:         "Preciso de título e SEO para um vídeo. O que você precisa saber primeiro?",
+  gravacao:    "Quero melhorar minha gravação. Por onde começo?",
+  retencao:    "Minha retenção está baixa. Me ajude a identificar o problema.",
+  shorts:      "Quero criar um Short. O que você precisa saber?",
+  monetizacao: "Quero monetizar meu canal. Por onde começo?",
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let sessions = { chat: [] };
+let activeTab = "chat";
+let loading = false;
+let userPassword = "";
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────
+document.getElementById("password-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") doLogin();
+});
+
+async function doLogin() {
+  const pwd = document.getElementById("password-input").value.trim();
+  if (!pwd) return;
+
+  const btn = document.getElementById("login-btn");
+  const errEl = document.getElementById("login-error");
+  btn.disabled = true;
+  btn.textContent = "VERIFICANDO...";
+  errEl.textContent = "";
+
+  // Testa a senha com uma chamada real à function
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        password: pwd,
+        systemPrompt: "Responda apenas: OK",
+        messages: [{ role: "user", content: "teste" }],
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.status === 401 || data.error) {
+      errEl.textContent = "Chave de acesso inválida.";
+      btn.disabled = false;
+      btn.textContent = "ENTRAR";
+      return;
+    }
+
+    // Senha válida
+    userPassword = pwd;
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("app").classList.add("visible");
+  } catch (err) {
+    errEl.textContent = "Erro de conexão. Tente novamente.";
+    btn.disabled = false;
+    btn.textContent = "ENTRAR";
+  }
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function switchTab(tabId) {
+  activeTab = tabId;
+
+  document.querySelectorAll(".tab").forEach(t => {
+    t.classList.toggle("active", t.dataset.tab === tabId);
+  });
+
+  document.getElementById("mode-label").textContent = tabId.toUpperCase() + " MODE";
+  document.getElementById("user-input").placeholder =
+    tabId === "chat" ? "Digite sua pergunta..." : `Modo: ${tabId} — responda ou faça uma pergunta`;
+
+  renderMessages();
+
+  // Auto-open se sessão vazia
+  if (!sessions[tabId] || sessions[tabId].length === 0) {
+    sessions[tabId] = [];
+    setTimeout(() => sendMessage(TAB_OPENERS[tabId]), 80);
+  }
+}
+
+// ── MESSAGES ──────────────────────────────────────────────────────────────
+function renderMessages() {
+  const container = document.getElementById("messages");
+  const msgs = sessions[activeTab] || [];
+
+  container.innerHTML = "";
+
+  if (activeTab === "chat" && msgs.length === 0) {
+    container.innerHTML = `
+      <div class="welcome">
+        <div class="welcome-title">GROWTH.AI // INICIALIZADO</div>
+        <p>Estrategista de YouTube. Não dou conselhos genéricos — faço as perguntas certas primeiro, depois entrego o caminho específico para o seu canal.</p>
+        <p>Use as abas acima para cada modo, ou comece a digitar.</p>
+        <div class="caps">
+          <span class="cap">ROTEIRO</span><span class="cap">RETENÇÃO</span>
+          <span class="cap">CTR</span><span class="cap">SEO</span>
+          <span class="cap">SHORTS</span><span class="cap">GRAVAÇÃO</span>
+          <span class="cap">MONETIZAÇÃO</span>
+        </div>
+      </div>`;
+    return;
+  }
+
+  msgs.forEach(msg => {
+    const row = document.createElement("div");
+    row.className = `msg-row ${msg.role === "user" ? "user" : ""}`;
+
+    const avatar = document.createElement("div");
+    avatar.className = `avatar ${msg.role === "assistant" ? "ai" : "user"}`;
+    avatar.textContent = msg.role === "assistant" ? "G" : "EU";
+
+    const bubble = document.createElement("div");
+    bubble.className = `bubble ${msg.role === "assistant" ? "ai" : "user"}`;
+
+    if (msg.role === "assistant") {
+      bubble.innerHTML = parseMarkdown(msg.content);
+    } else {
+      bubble.textContent = msg.content;
+    }
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    container.appendChild(row);
+  });
+
+  // Typing indicator
+  if (loading) {
+    const row = document.createElement("div");
+    row.className = "msg-row";
+    row.innerHTML = `
+      <div class="avatar ai">G</div>
+      <div class="bubble ai"><div class="typing"><span></span><span></span><span></span></div></div>`;
+    container.appendChild(row);
+  }
+
+  container.scrollTop = container.scrollHeight;
+
+  // Update tab dots
+  document.querySelectorAll(".tab").forEach(t => {
+    const tid = t.dataset.tab;
+    const hasMsgs = sessions[tid] && sessions[tid].length > 0;
+    t.classList.toggle("has-messages", hasMsgs && tid !== "chat");
+  });
+}
+
+// ── MARKDOWN ──────────────────────────────────────────────────────────────
+function parseMarkdown(text) {
+  const lines = text.split("\n");
+  let html = "";
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (!line.trim()) { i++; continue; }
+
+    if (line.startsWith("## ")) {
+      html += `<div class="md-h2">${esc(line.slice(3))}</div>`;
+      i++;
+    } else if (line.startsWith("### ")) {
+      html += `<div class="md-h3">${inline(line.slice(4))}</div>`;
+      i++;
+    } else if (line.startsWith("---")) {
+      html += `<hr>`;
+      i++;
+    } else if (/^[\*\-] /.test(line) || /^\d+\. /.test(line)) {
+      html += `<ul>`;
+      while (i < lines.length && (/^[\*\-] /.test(lines[i]) || /^\d+\. /.test(lines[i]))) {
+        const content = lines[i].replace(/^[\*\-] /, "").replace(/^\d+\. /, "");
+        html += `<li>${inline(content)}</li>`;
+        i++;
+      }
+      html += `</ul>`;
+    } else {
+      let para = line;
+      i++;
+      while (i < lines.length && lines[i].trim() &&
+        !lines[i].startsWith("## ") && !lines[i].startsWith("### ") &&
+        !lines[i].startsWith("---") && !/^[\*\-] /.test(lines[i]) && !/^\d+\. /.test(lines[i])) {
+        para += " " + lines[i];
+        i++;
+      }
+      html += `<p>${inline(para)}</p>`;
+    }
+  }
+  return html;
+}
+
+function esc(t) { return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function inline(text) {
+  return esc(text)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`(.+?)`/g, "<code>$1</code>");
+}
+
+// ── SEND ──────────────────────────────────────────────────────────────────
+async function sendMessage(presetText) {
+  const inputEl = document.getElementById("user-input");
+  const text = presetText || inputEl.value.trim();
+  if (!text || loading) return;
+
+  if (!presetText) {
+    inputEl.value = "";
+    inputEl.style.height = "auto";
+  }
+
+  loading = true;
+  updateSendBtn();
+  document.getElementById("truncated-warn").classList.remove("visible");
+
+  const hist = sessions[activeTab] || [];
+  const newHist = [...hist, { role: "user", content: text }];
+  sessions[activeTab] = newHist;
+  renderMessages();
+
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        password: userPassword,
+        systemPrompt: PROMPTS[activeTab] || PROMPTS.chat,
+        messages: newHist.map(m => ({ role: m.role, content: m.content })),
+      }),
+    });
+
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message || data.error);
+
+    const reply = data.content.filter(b => b.type === "text").map(b => b.text).join("\n");
+    const truncated = data.stop_reason === "max_tokens";
+
+    const fullReply = truncated
+      ? reply + "\n\n*[Resposta longa — digite **continuar** para o próximo bloco]*"
+      : reply;
+
+    sessions[activeTab] = [...newHist, { role: "assistant", content: fullReply }];
+    if (truncated) document.getElementById("truncated-warn").classList.add("visible");
+
+  } catch (err) {
+    sessions[activeTab] = [...newHist, { role: "assistant", content: `**Erro:** ${err.message}` }];
+  }
+
+  loading = false;
+  updateSendBtn();
+  renderMessages();
+}
+
+// ── INPUT ─────────────────────────────────────────────────────────────────
+const inputEl = document.getElementById("user-input");
+
+inputEl.addEventListener("input", () => {
+  inputEl.style.height = "auto";
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + "px";
+  updateSendBtn();
+});
+
+inputEl.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+function updateSendBtn() {
+  const btn = document.getElementById("send-btn");
+  const hasText = inputEl.value.trim().length > 0;
+  btn.disabled = loading || !hasText;
+  btn.style.background = (loading || !hasText) ? "#111" : "#FF3B3B";
+  btn.style.borderColor = (loading || !hasText) ? "#222" : "#FF3B3B";
+}
+
+updateSendBtn();
+</script>
+</body>
+</html>
