@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GROWTH.AI — YouTube Strategy Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -39,111 +40,234 @@ body {
   inset: 0;
   background: var(--bg);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
   z-index: 100;
+}
+
+/* Coluna esquerda — produto */
+.login-left {
+  flex: 1;
+  background: linear-gradient(135deg, #080808 0%, #0d0000 100%);
+  border-right: 1px solid #1a1a1a;
+  display: flex;
   flex-direction: column;
-  gap: 0;
+  justify-content: center;
+  padding: 48px 52px;
+  position: relative;
+  overflow: hidden;
 }
-
-.login-box {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  padding: 32px 28px;
-  width: 100%;
-  max-width: 360px;
+.login-left::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 400px; height: 400px;
+  background: radial-gradient(ellipse, rgba(255,0,0,0.08) 0%, transparent 70%);
+  pointer-events: none;
 }
-
-.login-logo {
+.login-left::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: -60px;
+  width: 300px; height: 300px;
+  background: radial-gradient(ellipse, rgba(255,0,0,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ll-logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 24px;
+  margin-bottom: 52px;
 }
-
-.login-logo-icon {
-  width: 32px; height: 32px;
+.ll-logo-icon {
+  width: 32px; height: 22px;
   background: var(--red);
-  border-radius: 7px;
+  border-radius: 4px;
   display: flex; align-items: center; justify-content: center;
 }
-
-.login-title {
-  font-size: 13px;
-  font-weight: 700;
+.ll-logo-name {
+  font-family: var(--oswald);
+  font-size: 18px; font-weight: 700;
+  color: var(--white); letter-spacing: .06em;
+}
+.ll-logo-name em { color: var(--red); font-style: normal; }
+.ll-headline {
+  font-family: var(--bebas);
+  font-size: clamp(36px, 4vw, 56px);
   color: var(--white);
-  letter-spacing: 0.1em;
+  line-height: .95;
+  letter-spacing: .02em;
+  margin-bottom: 12px;
+}
+.ll-headline .red { color: var(--red); }
+.ll-sub {
+  font-family: var(--open);
+  font-size: 14px; font-weight: 300;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 40px;
+  max-width: 340px;
+}
+.ll-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ll-mode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 6px;
+  transition: all .2s;
+}
+.ll-mode:hover {
+  background: rgba(255,0,0,0.05);
+  border-color: rgba(255,0,0,0.12);
+}
+.ll-mode-icon {
+  font-family: var(--bebas);
+  font-size: 14px;
+  color: var(--red);
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.ll-mode-name {
+  font-family: var(--oswald);
+  font-size: 12px; font-weight: 500;
+  color: var(--white); opacity: .7;
+  letter-spacing: .04em;
   text-transform: uppercase;
 }
-
-.login-sub {
-  font-size: 9px;
-  color: var(--dim);
-  letter-spacing: 0.08em;
-  margin-top: 2px;
+.ll-mode-desc {
+  font-family: var(--open);
+  font-size: 11px; font-weight: 300;
+  color: var(--text);
+  margin-left: auto;
+  text-align: right;
+}
+.ll-footer {
+  margin-top: 40px;
+  font-family: var(--open);
+  font-size: 10px; color: #2a2a2a;
+  letter-spacing: .04em;
 }
 
+/* Coluna direita — login */
+.login-right {
+  width: 420px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+  background: #070707;
+}
+.login-box {
+  width: 100%;
+  max-width: 320px;
+}
+.login-logo {
+  margin-bottom: 32px;
+}
+.login-title {
+  font-family: var(--bebas);
+  font-size: 28px;
+  color: var(--white);
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+}
+.login-subtitle {
+  font-family: var(--open);
+  font-size: 12px; font-weight: 300;
+  color: var(--text);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
 .login-label {
-  font-size: 9px;
-  color: var(--dim);
-  letter-spacing: 0.1em;
+  font-family: var(--oswald);
+  font-size: 10px; font-weight: 500;
+  color: var(--text);
+  letter-spacing: .1em;
   text-transform: uppercase;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  display: block;
 }
-
+.login-input-wrap {
+  position: relative;
+  margin-bottom: 8px;
+}
 .login-input {
   width: 100%;
-  background: #0a0a0a;
-  border: 1px solid var(--border2);
+  background: #0d0d0d;
+  border: 1px solid #1e1e1e;
   color: var(--white);
-  font-family: inherit;
-  font-size: 13px;
-  padding: 10px 12px;
+  font-family: var(--open);
+  font-size: 14px;
+  padding: 12px 44px 12px 14px;
   border-radius: 6px;
   outline: none;
-  letter-spacing: 0.05em;
-  transition: border-color 0.15s;
+  transition: border-color .2s;
+  letter-spacing: .04em;
 }
-
 .login-input:focus { border-color: var(--red); }
-
+.login-toggle-pw {
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  cursor: pointer; color: var(--text);
+  font-size: 14px; padding: 4px;
+  display: flex; align-items: center;
+}
+.login-toggle-pw:hover { color: var(--white); }
+.login-error {
+  font-family: var(--open);
+  font-size: 11px; color: var(--red);
+  min-height: 18px;
+  margin-bottom: 16px;
+  letter-spacing: .02em;
+}
 .login-btn {
   width: 100%;
   background: var(--red);
-  border: none;
-  color: white;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 11px;
+  border: none; color: white;
+  font-family: var(--oswald);
+  font-size: 13px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 13px;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 14px;
-  transition: opacity 0.15s;
+  transition: all .2s;
+  margin-bottom: 20px;
 }
-
-.login-btn:hover { opacity: 0.85; }
-.login-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.login-error {
-  font-size: 10px;
-  color: var(--red);
-  margin-top: 8px;
-  text-align: center;
-  letter-spacing: 0.04em;
-  min-height: 16px;
+.login-btn:hover { background: #cc0000; }
+.login-btn:disabled { opacity: .4; cursor: not-allowed; }
+.login-divider {
+  border: none;
+  border-top: 1px solid #1a1a1a;
+  margin-bottom: 16px;
 }
-
 .login-footer {
-  font-size: 9px;
-  color: var(--muted);
+  font-family: var(--open);
+  font-size: 11px; font-weight: 300;
+  color: #333;
   text-align: center;
-  margin-top: 16px;
-  letter-spacing: 0.04em;
-  line-height: 1.6;
+  line-height: 1.7;
+}
+.login-footer a {
+  color: var(--red);
+  text-decoration: none;
+}
+.login-footer a:hover { text-decoration: underline; }
+
+/* Mobile: empilha */
+@media (max-width: 768px) {
+  #login-screen { flex-direction: column; }
+  .login-left { display: none; }
+  .login-right { width: 100%; padding: 40px 24px; }
 }
 
 /* ── APP ── */
@@ -520,27 +644,92 @@ body {
 
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <div class="login-logo-icon">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-        </svg>
+
+  <!-- ESQUERDA: produto -->
+  <div class="login-left">
+    <div class="ll-logo">
+      <div class="ll-logo-icon">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
       </div>
-      <div>
-        <div class="login-title">GROWTH<span style="color:#FF3B3B">.AI</span></div>
-        <div class="login-sub">YOUTUBE STRATEGY ENGINE</div>
+      <span class="ll-logo-name">GROWTH<em>.AI</em></span>
+    </div>
+
+    <h1 class="ll-headline">
+      SEU CANAL<br>
+      NUMA<br>
+      <span class="red">MÁQUINA DE</span><br>
+      <span class="red">CRESCIMENTO.</span>
+    </h1>
+    <p class="ll-sub">
+      Estrategista de YouTube com IA. Diagnóstico real, roteiros que prendem, SEO que ranqueia — tudo personalizado para o seu canal.
+    </p>
+
+    <div class="ll-modes">
+      <div class="ll-mode">
+        <span class="ll-mode-icon">▶</span>
+        <span class="ll-mode-name">Roteiro</span>
+        <span class="ll-mode-desc">Hook + retenção + CTA</span>
+      </div>
+      <div class="ll-mode">
+        <span class="ll-mode-icon">◎</span>
+        <span class="ll-mode-name">Análise de Canal</span>
+        <span class="ll-mode-desc">Diagnóstico cirúrgico</span>
+      </div>
+      <div class="ll-mode">
+        <span class="ll-mode-icon">✦</span>
+        <span class="ll-mode-name">Ideias</span>
+        <span class="ll-mode-desc">5 ideias de alto impacto</span>
+      </div>
+      <div class="ll-mode">
+        <span class="ll-mode-icon">#</span>
+        <span class="ll-mode-name">SEO</span>
+        <span class="ll-mode-desc">Título + tags + descrição</span>
+      </div>
+      <div class="ll-mode">
+        <span class="ll-mode-icon">↗</span>
+        <span class="ll-mode-name">Retenção</span>
+        <span class="ll-mode-desc">Passar de 50%</span>
+      </div>
+      <div class="ll-mode">
+        <span class="ll-mode-icon">$</span>
+        <span class="ll-mode-name">Monetização</span>
+        <span class="ll-mode-desc">Receita além do AdSense</span>
       </div>
     </div>
-    <div class="login-label">Chave de acesso</div>
-    <input class="login-input" id="password-input" type="password" placeholder="••••••••••••" />
-    <div class="login-error" id="login-error"></div>
-    <button class="login-btn" id="login-btn" onclick="doLogin()">ENTRAR</button>
-    <div class="login-footer">
-      Acesso exclusivo para clientes.<br>
-      Dúvidas? Entre em contato pelo WhatsApp.
+
+    <div class="ll-footer">GROWTH.AI · Hublink · Acesso exclusivo para clientes</div>
+  </div>
+
+  <!-- DIREITA: login -->
+  <div class="login-right">
+    <div class="login-box">
+      <div class="login-title">ACESSAR</div>
+      <div class="login-subtitle">
+        Insira sua chave de acesso para entrar na plataforma.<br>
+        Ela foi enviada no e-mail após a compra.
+      </div>
+
+      <label class="login-label">Chave de acesso</label>
+      <div class="login-input-wrap">
+        <input class="login-input" id="password-input" type="password" placeholder="••••••••••••" />
+        <button class="login-toggle-pw" id="toggle-pw" type="button" onclick="togglePw()">
+          <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <div class="login-error" id="login-error"></div>
+
+      <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar na plataforma →</button>
+
+      <hr class="login-divider"/>
+      <div class="login-footer">
+        Não recebeu sua chave?<br>
+        <a href="https://wa.me/5516994509785" target="_blank">Fale com o suporte pelo WhatsApp</a>
+      </div>
     </div>
   </div>
+
 </div>
 
 <!-- APP -->
@@ -684,6 +873,18 @@ let loading = false;
 let userPassword = "";
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────
+function togglePw(){
+  const inp = document.getElementById('password-input');
+  const icon = document.getElementById('eye-icon');
+  if(inp.type==='password'){
+    inp.type='text';
+    icon.innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    inp.type='password';
+    icon.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+
 document.getElementById("password-input").addEventListener("keydown", e => {
   if (e.key === "Enter") doLogin();
 });
